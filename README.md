@@ -2,7 +2,7 @@
 
 **Intelligent Rebalancing: Reinforcement Learning Agent for Optimal Bike-Sharing Distribution Powered by Historical Usage Data**
 
-![iREbikeLANCE Logo](https://i.ibb.co/M11Jc7h/irebikellance-logo.png)
+![iREbikeLANCE Logo](https://i.ibb.co/1tgDLS4X/e36fa2bb-b33b-4491-b034-93130804203f.png)
 
 ---
 
@@ -140,16 +140,10 @@ Based on extensive simulations using historical data from Warsaw's BSS:
 This project is based on research conducted by:
 
 *   **Dr. Eng. Igor Betkier** (Project Coordinator & System Architecture)
-*   **Wojciech Dawid**
 
 Affiliated with the Faculty of Civil Engineering and Geodesy, Military University of Technology, Warsaw, Poland.
 
 The UI and simulation environment are inspired by the findings and methodologies presented in their research paper "Intelligent Rebalancing: Reinforcement Learning Agent for Optimal Bike-Sharing Distribution Powered by Historical Usage Data".
+[Read the paper on ResearchGate](https://www.researchgate.net/publication/391807731_Intelligent_Rebalancing_Reinforcement_Learning_Agent_for_Optimal_Bike-Sharing_Distribution_Powered_by_Historical_Usage_Data)
 
----
 
-## 📄 License
-
-*(Consider adding a license, e.g., MIT, Apache 2.0. For now, a placeholder.)*
-
-This project is currently unlicensed. Please contact the authors for permissions regarding use or distribution.
