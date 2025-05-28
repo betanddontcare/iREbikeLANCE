@@ -1,9 +1,6 @@
-# iREbikeLANCE 🚲 
-
-**Intelligent Rebalancing: Reinforcement Learning Agent for Optimal Bike-Sharing Distribution Powered by Historical Usage Data**
-
 ![iREbikeLANCE Logo](https://i.ibb.co/1tgDLS4X/e36fa2bb-b33b-4491-b034-93130804203f.png)
 
+**Intelligent Rebalancing: Reinforcement Learning Agent for Optimal Bike-Sharing Distribution Powered by Historical Usage Data**
 ---
 
 **iREbikeLANCE** is a comprehensive platform demonstrating the power of Deep Reinforcement Learning (DRL) for optimizing dynamic bike rebalancing in urban Bike-Sharing Systems (BSS). This project provides an interactive frontend to configure, train, and evaluate a Proximal Policy Optimization (PPO) agent within a custom simulation environment built on real-world historical data from Warsaw's BSS.
