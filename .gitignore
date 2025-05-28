@@ -1,0 +1,59 @@
+# ─── PYTHON (backend) ───────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python packaging
+*.egg-info/
+*.egg
+build/
+dist/
+
+# Env and logs
+.env
+*.log
+
+# Testing
+.cache/
+.pytest_cache/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ─── NODE / FRONTEND ────────────────────────────────
+node_modules/
+dist/
+build/
+.npm/
+.vite/
+.next/
+.yarn/
+.pnpm-debug.log
+package-lock.json
+yarn.lock
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ─── IDEs and OS ────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── DOCKER (optional) ───────────────────────────────
+*.dockerfile
+docker-compose.override.yml
