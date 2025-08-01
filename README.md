@@ -129,7 +129,7 @@ Based on extensive simulations using historical data from Warsaw's BSS:
 6.  **Analyze Results:** Once training is complete, the "Training Results" section will display key performance indicators like final success rate, average reward, total relocations, and training time. Detailed training charts provide insights into the learning process.
 7.  **Compare Models:** Click "Compare vs Baseline" to evaluate your trained model against a non-learning baseline agent using the same test data and parameters.
 8.  **Download Model:** If satisfied with the training, download the `*.zip` file containing the trained RL model.
-9.  **API Documentation:*** [API Documentation](./API_DOCUMENTATION.md)
+9.  **API Documentation:** [API Documentation](./API_DOCUMENTATION.md)
 
 ---
 
