@@ -1,4 +1,4 @@
-![iREbikeLANCE Logo]([https://i.postimg.cc/28gGYMdd/e36fa2bb-b33b-4491-b034-93130804203f-1.png])
+![iREbikeLANCE Logo](https://i.postimg.cc/28gGYMdd/e36fa2bb-b33b-4491-b034-93130804203f-1.png)
 
 **Intelligent Rebalancing: Reinforcement Learning Agent for Optimal Bike-Sharing Distribution Powered by Historical Usage Data**
 ---
