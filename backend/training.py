@@ -68,6 +68,9 @@ class BikeShareMetricsCallback(BaseCallback):
         bikes_moved = 0
         trips_completed = 0
         trips_failed = 0
+        dist_errors = []
+        empty_counts = []
+        full_counts = []
 
         while not done:
             action, _ = self.model.predict(obs, deterministic=True)
@@ -81,6 +84,12 @@ class BikeShareMetricsCallback(BaseCallback):
                 trips_completed += info[0].get('trips_completed', 0)
             if 'trips_failed' in info[0]:
                 trips_failed += info[0].get('trips_failed', 0)
+            if 'dist_error' in info[0]:
+                dist_errors.append(float(info[0]['dist_error']))
+            if 'empty_stations' in info[0]:
+                empty_counts.append(int(info[0]['empty_stations']))
+            if 'full_stations' in info[0]:
+                full_counts.append(int(info[0]['full_stations']))
 
         # Calculate success rate
         if trips_completed + trips_failed > 0:
@@ -88,11 +97,14 @@ class BikeShareMetricsCallback(BaseCallback):
         else:
             success_rate = 0
 
-        # Store metrics
+        # Store metrics (episode means of the per-step values reported by the environment)
         self.metrics['timesteps'].append(self.num_timesteps)
         self.metrics['rewards'].append(float(total_reward))
         self.metrics['trip_success_rate'].append(float(success_rate))
         self.metrics['bikes_moved'].append(int(bikes_moved))
+        self.metrics['distribution_error'].append(float(np.mean(dist_errors)) if dist_errors else None)
+        self.metrics['empty_stations'].append(float(np.mean(empty_counts)) if empty_counts else None)
+        self.metrics['full_stations'].append(float(np.mean(full_counts)) if full_counts else None)
 
         if self.verbose > 0:
             logger.info(f"Evaluation at step {self.num_timesteps}:")
@@ -355,8 +367,9 @@ def train_with_distance_awareness_with_debug(
             'std_reward': float(std_reward),
             'eval_episodes': 10,
             'training_timesteps': total_timesteps,
-            'success_rate_eval': callback.metrics['trip_success_rate'][-1] if callback.metrics['trip_success_rate'] else 75.0 + np.random.uniform(5,15),
-            'avg_bikes_moved': callback.metrics['bikes_moved'][-1] if callback.metrics['bikes_moved'] else int(np.random.uniform(30, 80)),
+            # No evaluation ran (fewer steps than eval_freq): report missing values, never placeholders
+            'success_rate_eval': callback.metrics['trip_success_rate'][-1] if callback.metrics['trip_success_rate'] else None,
+            'avg_bikes_moved': callback.metrics['bikes_moved'][-1] if callback.metrics['bikes_moved'] else None,
             'training_duration': training_duration,
             'training_metrics': callback.metrics  # Include full training metrics
         }
@@ -429,21 +442,26 @@ def evaluate_baseline_model(env, n_episodes=3):
         'decisions': decisions[:10]
     }
 
-def evaluate_trained_model(model, env, n_episodes=3):
-    """Evaluate trained model."""
+def evaluate_trained_model(model, env, n_episodes=3, obs_normalizer=None):
+    """Evaluate trained model on full episodes (same protocol as the baseline).
+
+    obs_normalizer: the VecNormalize statistics saved with the model; the policy was trained
+    on normalized observations, so they are normalized the same way here.
+    """
     total_reward = 0
     total_relocations = 0
     total_trips_completed = 0
     total_trips_failed = 0
     decisions = []
-    
+
     for episode in range(n_episodes):
         obs, _ = handle_env_reset(env.reset())
         done = False
         episode_reward = 0
-        
-        while not done and len(decisions) < 15:  # Limit decisions
-            action, _ = model.predict(obs, deterministic=True)
+
+        while not done:
+            policy_obs = obs_normalizer.normalize_obs(obs) if obs_normalizer is not None else obs
+            action, _ = model.predict(policy_obs, deterministic=True)
             obs, reward, done, truncated, info = env.step(action)
             episode_reward += reward
             
@@ -498,9 +516,20 @@ def compare_models_baseline_vs_user(user_model_path, env_factory):
     if os.path.exists(user_model_path):
         try:
             from stable_baselines3 import PPO
+            import pickle
             user_model = PPO.load(user_model_path)
+            # Observation normalization statistics saved next to the model during training
+            obs_normalizer = None
+            stats_path = os.path.join(os.path.dirname(user_model_path), "vec_normalize.pkl")
+            if os.path.exists(stats_path):
+                with open(stats_path, "rb") as f:
+                    obs_normalizer = pickle.load(f)
+                obs_normalizer.training = False
+                logger.info(f"Loaded observation normalization statistics: {stats_path}")
+            else:
+                logger.warning("vec_normalize.pkl not found next to the model - evaluating on raw observations")
             user_env = env_factory()  # Use SAME environment factory
-            user_results = evaluate_trained_model(user_model, user_env, n_episodes=3)
+            user_results = evaluate_trained_model(user_model, user_env, n_episodes=3, obs_normalizer=obs_normalizer)
             results['user'] = {
                 'name': 'Your Trained Model', 
                 'description': 'Your model trained with custom reward weights',

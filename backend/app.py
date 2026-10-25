@@ -440,12 +440,15 @@ def run_rl_training_process(config_from_frontend, status_queue):
             'avg_evaluation_reward': metrics_from_trainer.get('mean_reward', "N/A"),
             'std_evaluation_reward': metrics_from_trainer.get('std_reward', "N/A"),
             'num_eval_episodes': metrics_from_trainer.get('eval_episodes', "N/A"),
-            'success_rate_eval': metrics_from_trainer.get('success_rate_eval', 
-                                                        round(75 + np.random.uniform(5,15),1)),
-            'improvement': round(12 + np.random.uniform(2,8),1),
-            'avg_reloc_distance': round(np.random.uniform(0.8, 2.5), 2),
-            'avg_station_utilization': round(np.random.uniform(70, 85), 1),
-            'total_relocations': int(np.random.uniform(30, 80)),
+            # All values below come from the simulation; None when not measured (no placeholders)
+            'success_rate_eval': metrics_from_trainer.get('success_rate_eval'),
+            # Success rate of the last periodic evaluation (shown as the primary metric in the UI)
+            'success_rate': metrics_from_trainer.get('success_rate_eval'),
+            'improvement': None,
+            'avg_reloc_distance': None,
+            'avg_station_utilization': None,
+            # Bikes relocated during the last evaluation episode
+            'total_relocations': metrics_from_trainer.get('avg_bikes_moved'),
             'raw_trainer_metrics': metrics_from_trainer,
             'reward_weights_used': custom_reward_weights,
             'training_metrics': metrics_from_trainer.get('training_metrics', {})
@@ -904,7 +907,8 @@ def get_training_status():
             for key, values in processed_metrics.items():
                 if key != 'timesteps':
                     if len(values) < base_length:
-                        last_val = values[-1] if values else 0
+                        # A metric that was never recorded stays empty (None), not zero
+                        last_val = values[-1] if values else None
                         values.extend([last_val] * (base_length - len(values)))
                     elif len(values) > base_length:
                         processed_metrics[key] = values[:base_length]
